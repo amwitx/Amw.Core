@@ -1,0 +1,46 @@
+﻿{
+    "settings": {
+        "namespace": []
+    },
+    "users": [
+        {
+            "username": "test",
+            "password": "e10adc3949ba59abbe56e057f20f883e",
+            "appid": "",
+            "appsecret": "",
+            "role": [
+                "account"
+            ]
+        },
+        {
+            "username": "admin",
+            "password": "",
+            "appid": "",
+            "appsecret": "",
+            "role": []
+        }
+    ],
+    "roles": [
+        {
+            "name": "account",
+            "url": [
+                1,
+                2
+            ]
+        },
+        {
+            "name": "balance",
+            "url": [
+                1
+            ]
+        }
+    ],
+    "apis": [
+        {
+            "1": "api/account/get"
+        },
+        {
+            "2": ""
+        }
+    ]
+}

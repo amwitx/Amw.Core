@@ -1,0 +1,47 @@
+﻿@model List<API.Wiki.Models.WikiControllerView>
+@{
+    ViewBag.Title = "API - wiki";
+    Layout = "~/Areas/wiki/Views/Shared/_Layout.cshtml";
+}
+@section foot{
+    <script type="text/javascript">
+        $(function () {
+            $('.api_controller').click(function () {
+                $('.api_controller').next().hide();
+                $(this).next().show();
+            });
+        });
+    </script>
+}
+<ul class="api_manual">
+    <li><h3>接口调试工具</h3></li>
+    <li><strong>使用说明：</strong></li>
+    <li>选择需要的接口类型。</li>
+</ul>
+<div class="api_container">
+    @for (int i = 0; i < Model.OrderBy(o => o.Name).ToList().Count; i++)
+    {
+        var controller = Model[i];
+        <table cellpadding="0" cellspacing="0" border="0" class="api_item api_controller">
+            <tr>
+                <th class="api_name"><a target="_blank" href="/wiki/apis/controller/@controller.Name">@controller.Name</a></th>
+                <th class="api_des">@controller.Annotation</th>
+                <th class="api_right"><strong>○&nbsp;○&nbsp;○&nbsp;</strong></th>
+            </tr>
+        </table>
+        <div class="action_list" style="display:@(i==0?"block":"none");">
+            <table cellpadding="0" cellspacing="0" border="0" class="api_item api_action">
+                <thead>
+                    <tr><th class="api_name">接口地址</th><th class="api_des">功能描述</th></tr>
+                </thead>
+                @foreach (var action in controller.Actions)
+                {
+                    <tr>
+                        <td class="api_name"><a target="_blank" href="/wiki/apis/action/@controller.Name-@action.Name">@controller.Namespace/@action.Name</a></td>
+                        <td class="api_des">@action.Annotation</td>
+                    </tr>
+                }
+            </table>
+        </div>
+    }
+</div>

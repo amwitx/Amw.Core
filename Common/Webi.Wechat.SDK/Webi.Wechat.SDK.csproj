@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Apis\WxApp\" />
+    <Folder Include="Apis\WxPay\" />
+    <Folder Include="Models\WxApp\" />
+    <Folder Include="Models\WxPay\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Webi.Core.SDK\Webi.Core.SDK.csproj" />
+  </ItemGroup>
+
+</Project>

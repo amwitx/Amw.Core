@@ -1,0 +1,149 @@
+﻿@model API.Wiki.Models.WikiActionView
+@{
+    ViewBag.Title = Model.Path + "/" + Model.Name;
+    Layout = "~/Areas/wiki/Views/Shared/_Layout.cshtml";
+}
+@section head{
+    <style type="text/css">
+        .api_name { width: 150px; }
+
+        .api_des { width: 37%; }
+    </style>
+}
+<ul class="api_manual">
+    <li><a href="/wiki/apis">回到首页</a></li>
+    <li><strong>使用说明：</strong></li>
+    <li>（1）您可以直接在文本框内填入对应的参数值。</li>
+    <li>（2）点击检查问题按钮，即可得到相应的调试信息</li>
+</ul>
+<div class="api_container">
+    <table cellpadding="0" cellspacing="0" border="0" class="api_item api_controller">
+        <tr>
+            <th class="api_name">https://wechat.webi.com.cn@(Model.Path)/@Model.Name<input type="hidden" id="api_url" value="@Model.Path/@Model.Name" /></th>
+            <th class="api_des">@Model.Annotation</th>
+            <th class="api_right"></th>
+        </tr>
+    </table>
+    <form id="form" method="post" action="@Model.Path/@Model.Name">
+        @foreach (var parameterType in Model.ParameterTypes)
+        {
+            <table cellpadding="0" cellspacing="0" border="0" class="api_parameter api_item">
+                <thead>
+                    <tr>
+                        <th class="api_name">输入</th>
+                        <th class="api_type">参数类型</th>
+                        <th class="api_required">必填项</th>
+                        <th class="api_input @(parameterType.ParameterFormat== API.Wiki.Models.WikiParameterFormat.json?"hide":"")">输入</th>
+                        <th class="api_des">参数描述</th>
+                    </tr>
+                </thead>
+            </table>
+            if (parameterType.IsClass == true)
+            {
+                foreach (var parameter in parameterType.Parameters)
+                {
+                    <table cellpadding="0" cellspacing="0" border="0" class="api_item api_parameter">
+                        <tr>
+                            <td class="api_name">@parameter.Name</td>
+                            <td class="api_type">@parameter.Type</td>
+                            <td class="api_required">@(parameter.Required ? "✔" : "")</td>
+                            <td class="api_input @(parameterType.ParameterFormat== API.Wiki.Models.WikiParameterFormat.json?"hide":"")">
+                                <input type="text" id="@parameter.Name" name="@parameter.Name" />
+                            </td>
+                            <td class="api_des">@parameter.Annotation</td>
+                        </tr>
+                    </table>
+                }
+            }
+            else
+            {
+                <table cellpadding="0" cellspacing="0" border="0" class="api_item api_parameter">
+                    <tr>
+                        <td class="api_name">@parameterType.Name</td>
+                        <td class="api_type">@parameterType.Type</td>
+                        <td class="api_required">✔</td>
+                        <td class="api_input">
+                            <input type="text" id="@parameterType.Name" name="@parameterType.Name" />
+                        </td>
+                        <td class="api_des">@parameterType.Annotation</td>
+                    </tr>
+                </table>
+            }
+        }
+        <div class="test_button"><input type="button" id="check_submit" value="检查问题" />
+        <span id="http_states" name="http_states" class="test_http_states" ></span></div>
+    </form>
+    <div class="test_result">
+        <table cellpadding="0" cellspacing="0" border="0" class="api_item api_controller">
+            <tr>
+                <td class="api_post"><textarea id="area_in" class="area_in"></textarea></td>
+                <td class="api_des"><textarea id="area_result" class="area_result"></textarea></td>
+            </tr>
+        </table>
+    </div>
+    @if (Model.ReturnResults != null && Model.ReturnResults.Count > 0)
+    {
+        <table cellpadding="0" cellspacing="0" border="0" class="api_parameter api_item">
+            <thead>
+                <tr>
+                    <th class="api_name">输出</th>
+                    <th class="api_type">参数类型</th>
+                    <th class="api_required"></th>
+                    <th class="api_des">参数描述</th>
+                    <th class="api_input"></th>
+                </tr>
+            </thead>
+            @foreach (var parameter in Model.ReturnResults)
+            {
+                <tr>
+                    <td class="api_name">@parameter.Name</td>
+                    <td class="api_type">@parameter.Type</td>
+                    <td class="api_required"></td>
+                    <td class="api_des">@parameter.Annotation</td>
+                    <td class="api_input"></td>
+                </tr>
+            }
+        </table>
+    }
+</div>
+
+@section foot{
+    <script type="text/javascript">
+        $(function () {
+            var parameterJson = JSON.stringify(@Html.Raw(ViewBag.ParameterJson), null, 4);
+            $('#area_in').val(parameterJson);
+
+            $("#check_submit").on("click", function () {
+                $("#area_in").html("");
+                $("#area_result").val("");
+                var inputs = $(':text');
+                var url = $('#api_url').val();
+
+                var parameters = {};
+                $.each(inputs, function (index, item) {
+                    var value = $(this).val();
+                    var vvvvv = "'" + (value ? value : "") + "';"
+                    eval('parameters.' + $(item).attr('id') + '=' + vvvvv);
+                });
+
+                var param = JSON.stringify(parameters, null, 4);
+                $('#area_in').val(param);
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    contentType: "application/json",
+                    dataType: "json",
+                    data: param,
+                    success: function (data) {
+                        $("#http_states").html("200:OK");
+                        $("#area_result").val(JSON.stringify(data, null, 4));
+                    },
+                    error: function (XMLHttpRequest) {
+                        $("#http_states").html(XMLHttpRequest.status + ":" + XMLHttpRequest.statusText);
+                        $("#area_result").val(JSON.stringify(XMLHttpRequest.responseJSON, null, 4));
+                    },
+                });
+            });
+        });
+    </script>
+}

@@ -1,0 +1,35 @@
+﻿@model API.Wiki.Models.WikiControllerView
+@{
+    ViewBag.Title = Model.Namespace + "/" + Model.Name;
+    Layout = "~/Areas/wiki/Views/Shared/_Layout.cshtml";
+}
+<ul class="api_manual">
+    <li><a href="/wiki/apis">回到首页</a></li>
+    <li><strong>使用说明：</strong></li>
+    <li>选择合适的接口。</li>
+</ul>
+<div class="api_container">
+    <table cellpadding="0" cellspacing="0" border="0" class="api_item api_controller">
+        <tr>
+            <th class="api_name">@Model.Name</th>
+            <th class="api_des">@Model.Annotation</th>
+            <th class="api_right"></th>
+        </tr>
+    </table>
+    <div class="action_list">
+        <table cellpadding="0" cellspacing="0" border="0" class="api_item api_action">
+            <thead>
+                <tr><th class="api_name">接口地址</th><th class="api_des">功能描述</th></tr>
+            </thead>
+        </table>
+        @foreach (var action in Model.Actions)
+            {
+            <table cellpadding="0" cellspacing="0" border="0" class="api_item api_action">
+                <tr>
+                    <td class="api_name"><a target="_blank" href="/wiki/apis/action/@Model.Name-@action.Name">@Model.Namespace/@action.Name</a></td>
+                    <td class="api_des">@action.Annotation</td>
+                </tr>
+            </table>
+        }
+    </div>
+</div>

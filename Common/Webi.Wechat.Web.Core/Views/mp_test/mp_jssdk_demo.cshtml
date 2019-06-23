@@ -1,0 +1,52 @@
+﻿@model Webi.Wechat.Web.Core.Models.WxMP.WxMP_JssdkConfigOutput
+@inject Microsoft.Extensions.Options.IOptions<Webi.Wechat.Web.Core.Models.AppSettings.SiteConfig> SiteConfigs
+@{
+    ViewData["Title"] = "jssdk_demo";
+}
+@section layout_head_end{
+    <script type="text/javascript" src="//res2.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
+    <script type="text/javascript" src="/js/wxmp_jssdk.js?t=@SiteConfigs.Value.StaticFileVersion"></script>
+}
+<a href="/">index</a><br />
+@section layout_body_end{
+    <script type="text/javascript">
+        $(function () {
+            WxmpShareInit();
+        });
+        function WxmpShareInit() {
+            //是否微信打开
+            if (!WXMP_SDK.IsWeixinOpen()) {
+                console.log("请使用微信打开该页面");
+                return;
+            }
+            //初始化
+            var share_data = {
+                title: "分享测试-title",
+                desc: "分享测试-desc",
+                //必须为当前域名下的安全地址
+                link: window.location.href,
+                imgUrl: "http://wechat.webi.com.cn/images/share.jpg"
+            };
+            var share_url = window.location.href.split("#")[0];
+            var configParameters = { guid: "22AC726758544C2D9C6E9818A3FFE5CD", url: share_url };
+            $.ajax({
+                type: "POST",
+                url: "/api/mp_jssdk/config",
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify(configParameters),
+                success: function (data) {
+                    WXMP_SDK.Config(false, data.data, WXMP_SDK.JSAPIList_Share,
+                        function () {
+                            //成功后执行
+                            WXMP_SDK.ShareTimeLineOld(share_data);
+                            //成功后执行
+                            WXMP_SDK.ShareAppMessageOld(share_data);
+                        }, function (res) {
+                            console.log(res);
+                        });
+                }
+            });
+        }
+    </script>
+}

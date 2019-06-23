@@ -1,0 +1,53 @@
+﻿@inject Microsoft.Extensions.Options.IOptions<Webi.Wechat.Web.Core.Models.AppSettings.SiteConfig> SiteConfigs
+@{
+    ViewData["Title"] = "jssdk_demo";
+}
+@section layout_head_end{
+    <script type="text/javascript" src="//res2.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
+    <script type="text/javascript" src="/js/wxee_jssdk.js?t=@SiteConfigs.Value.StaticFileVersion"></script>
+}
+<a href="/">index</a><br />
+@section layout_body_end{
+    <script type="text/javascript">
+        $(function () {
+            WxmpShareInit();
+        });
+        function WxmpShareInit() {
+            //是否微信打开
+            if (!WXEE_SDK.IsWorkWeixinOpen()) {
+                console.log("请使用企业微信打开该页面");
+                return;
+            }
+            //初始化
+            var share_data = {
+                title: "分享测试-title",
+                desc: "分享测试-desc",
+                //必须为当前域名下的安全地址
+                link: window.location.href,
+                imgUrl: "http://wechat.webi.com.cn/images/share.jpg"
+            };
+            var share_url = window.location.href.split("#")[0];
+            var configParameters = { guid: "96A5AF1A0125438AB26290B51EE78A53", url: share_url };
+            $.ajax({
+                type: "POST",
+                url: "/api/ee_jssdk/config",
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify(configParameters),
+                success: function (data) {
+                    WXEE_SDK.Config(false, data.data, WXEE_SDK.JSAPIList_Share.concat(WXEE_SDK.JSAPIList_View),
+                        function () {
+                            //成功后执行
+                            //WXEE_SDK.onMenuShareAppMessage(share_data);
+                            //WXEE_SDK.onMenuShareTimeline(share_data);
+                            //WXEE_SDK.onMenuShareWechat(share_data);
+                            //隐藏菜单
+                            WXEE_SDK.WXEE_hideMenuItems(WXEE_SDK.JSAPIList_Share);
+                        }, function (res) {
+                            console.log(res);
+                        });
+                }
+            });
+        }
+    </script>
+}

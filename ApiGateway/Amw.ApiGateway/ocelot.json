@@ -1,0 +1,40 @@
+{
+  "ReRoutes": [
+    {
+      "UpstreamPathTemplate": "/order/{url}",
+      "UpstreamHttpMethod": [ "Get", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamPathTemplate": "/api/{url}",
+      "ServiceName": "Amw.OrderApi",
+      "UseServiceDiscovery": true,
+
+      "QoSOptions": {
+        "ExceptionsAllowedBeforeBreaking": 3,
+        "DurationOfBreak": 3000,
+        "TimeoutValue": 10000
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/user/{url}",
+      "UpstreamHttpMethod": [ "Get", "Post" ],
+
+      "DownstreamScheme": "http",
+      "DownstreamPathTemplate": "/api/{url}",
+      "ServiceName": "Amw.UserApi",
+      "UseServiceDiscovery": true,
+
+      "QoSOptions": {
+        "ExceptionsAllowedBeforeBreaking": 3,
+        "DurationOfBreak": 3000,
+        "TimeoutValue": 10000
+      }
+    }
+  ],
+  "GlobalConfiguration": {
+    "ServiceDiscoveryProvider": {
+      "Host": "localhost",
+      "Port": 8500
+    }
+  }
+}

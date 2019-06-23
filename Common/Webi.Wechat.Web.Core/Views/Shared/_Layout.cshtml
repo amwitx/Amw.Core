@@ -1,0 +1,28 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <!--css-->
+    <!--script-->
+    <script type="text/javascript" src="//res.webi.com.cn/js/jquery/jquery-1.12.4.min.js"></script>
+    <environment include="Development">
+        @RenderSection("layout_head_dev", required: false)
+    </environment>
+    <environment exclude="Development">
+        @RenderSection("layout_head_produce", required: false)
+    </environment>
+    @RenderSection("layout_head_end", required: false)
+</head>
+<body>
+    @RenderBody()
+    <environment include="Development">
+        @RenderSection("layout_body_dev", required: false)
+    </environment>
+    <environment exclude="Development">
+        @RenderSection("layout_body_produce", required: false)
+    </environment>
+    @RenderSection("layout_body_end", required: false)
+</body>
+</html>
